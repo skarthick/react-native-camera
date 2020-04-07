@@ -914,17 +914,19 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     videoWidth = videoSize.height;
     videoHeight = videoSize.width;
   }
-  if(!videoAsAsset.duration){
-      videoAsAsset.duration = 0;
+  CMTime videoDuration = videoAsAsset.duration;
+  if(!CMTimeGetSeconds(videoDuration)){
+      videoDuration = CMTimeMake(1, 10);
   }
+  int64_t recordedFileSize = captureOutput.recordedFileSize;
   if(!captureOutput.recordedFileSize){
-      captureOutput.recordedFileSize = 0;
+      recordedFileSize = 0;
   }
   NSMutableDictionary *videoInfo = [NSMutableDictionary dictionaryWithDictionary:@{
-     @"duration":[NSNumber numberWithFloat:CMTimeGetSeconds(videoAsAsset.duration)],
+     @"duration":[NSNumber numberWithFloat:CMTimeGetSeconds(videoDuration)],
      @"width":[NSNumber numberWithFloat:videoWidth],
      @"height":[NSNumber numberWithFloat:videoHeight],
-     @"size":[NSNumber numberWithLongLong:captureOutput.recordedFileSize],
+     @"size":[NSNumber numberWithLongLong:recordedFileSize],
   }];
 
   if (self.videoTarget == RCTCameraCaptureTargetCameraRoll) {
