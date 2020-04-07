@@ -895,8 +895,8 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 
   AVURLAsset* videoAsAsset = [AVURLAsset URLAssetWithURL:outputFileURL options:nil];
   AVAssetTrack* videoTrack = [[videoAsAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
-  float videoWidth;
-  float videoHeight;
+  float videoWidth = 0;
+  float videoHeight = 0;
 
   CGSize videoSize = [videoTrack naturalSize];
   CGAffineTransform txf = [videoTrack preferredTransform];
@@ -910,7 +910,12 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     videoWidth = videoSize.height;
     videoHeight = videoSize.width;
   }
-
+  if(!videoAsAsset.duration){
+      videoAsAsset.duration = 0;
+  }
+  if(!captureOutput.recordedFileSize){
+      captureOutput.recordedFileSize = 0;
+  }
   NSMutableDictionary *videoInfo = [NSMutableDictionary dictionaryWithDictionary:@{
      @"duration":[NSNumber numberWithFloat:CMTimeGetSeconds(videoAsAsset.duration)],
      @"width":[NSNumber numberWithFloat:videoWidth],
